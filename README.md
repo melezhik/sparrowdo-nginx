@@ -11,10 +11,6 @@ Sparrowdo module to install Nginx web server.
 
     $ cat sparrowfile
 
-    use v6;
-
-    use Sparrowdo;
-
     module_run 'Nginx';
 
 # Author
