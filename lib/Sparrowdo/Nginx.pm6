@@ -6,6 +6,16 @@ use Sparrowdo;
 
 our sub tasks (%args) {
 
+  if target_os() ~~ m/centos/ {
+
+    task_run  %(
+      task => 'install epel-release',
+      plugin => 'package-generic',
+      parameters => %( list => 'epel-release' )
+    );
+  
+  }
+
   task_run  %(
     task => 'install nginx',
     plugin => 'package-generic',
