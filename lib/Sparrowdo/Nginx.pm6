@@ -37,7 +37,7 @@ our sub tasks (%args) {
     parameters => %(
       variables => %(),
       target  => ( target_os() ~~ m/centos/ ) ?? '/etc/nginx/conf.d/default.conf' !! '/etc/nginx/sites-enabled/default',
-      mode    => '664',
+      mode    => '644',
       source => slurp NGINX_TMPL
     )
   );
