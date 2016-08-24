@@ -36,7 +36,10 @@ our sub tasks (%args) {
     task => "set up nginx main config",
     plugin => "templater",
     parameters => %(
-      variables => %( user => ( target_os() ~~ m/centos/ ) ?? 'nginx' !! 'www-data' ),
+      variables => %( 
+        user    => ( target_os() ~~ m/centos/ ) ?? 'nginx' !! 'www-data',
+        pidfile => ( target_os() eq 'centos6' ) ?? '/var/run/nginx.pid' !! '/run/nginx.pid'
+      ),
       target  => '/etc/nginx/nginx.conf',
       mode    => '644',
       source => slurp NGINX_MAIN_TMPL
@@ -47,7 +50,7 @@ our sub tasks (%args) {
     task => "set up nginx default site",
     plugin => "templater",
     parameters => %(
-      variables => %( pidfile => ( target_os() eq 'centos6' ) ?? '/var/run/nginx.pid' !! '/run/nginx.pid' ),
+      variables => %(),
       target  => ( target_os() ~~ m/centos/ ) ?? '/etc/nginx/conf.d/default.conf' !! '/etc/nginx/sites-enabled/default',
       mode    => '644',
       source => slurp NGINX_DEFAULT_TMPL
