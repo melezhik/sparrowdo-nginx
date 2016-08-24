@@ -4,7 +4,8 @@ unit module Sparrowdo::Nginx;
 
 use Sparrowdo;
 
-constant NGINX_TMPL = %?RESOURCES<default.conf>.Str;
+constant NGINX_MAIN_TMPL = %?RESOURCES<nginx.conf>.Str;
+constant NGINX_DEFAULT_TMPL = %?RESOURCES<default.conf>.Str;
 
 our sub tasks (%args) {
 
@@ -32,13 +33,32 @@ our sub tasks (%args) {
 
 
   task_run %(
-    task => "set up nginx site",
+    task => "set up nginx main config",
+    plugin => "templater",
+    parameters => %(
+      variables => %( user => ( target_os() ~~ m/centos/ ) ?? 'nginx' !! 'www-data' ),
+      target  => '/etc/nginx/nginx.conf',
+      mode    => '644',
+      source => slurp NGINX_MAIN_TMPL
+    )
+  );
+
+  task_run %(
+    task => "set up nginx default site",
     plugin => "templater",
     parameters => %(
       variables => %(),
       target  => ( target_os() ~~ m/centos/ ) ?? '/etc/nginx/conf.d/default.conf' !! '/etc/nginx/sites-enabled/default',
       mode    => '644',
-      source => slurp NGINX_TMPL
+      source => slurp NGINX_DEFAULT_TMPL
+    )
+  );
+
+  task_run %(
+    task    => "check nginx config",
+    plugin  => "bash",
+    parameters => %(
+      command => "nginx -t"
     )
   );
 
