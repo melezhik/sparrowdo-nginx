@@ -4,6 +4,8 @@ unit module Sparrowdo::Nginx;
 
 use Sparrowdo;
 
+constant NGINX_TMPL = %?RESOURCES<default.conf>.Str;
+
 our sub tasks (%args) {
 
   if target_os() ~~ m/centos/ {
