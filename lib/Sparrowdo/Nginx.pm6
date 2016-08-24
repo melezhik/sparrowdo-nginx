@@ -30,10 +30,22 @@ our sub tasks (%args) {
     parameters => %( service => 'nginx', action => 'enable' )
   );
 
+
+  task_run %(
+    task => "set up nginx site",
+    plugin => "templater",
+    parameters => %(
+      variables => %(),
+      target  => ( target_os() ~~ m/centos/ ) ?? '/etc/nginx/conf.d/default.conf' !! '/etc/nginx/sites-enabled/default',
+      mode    => '664',
+      source => slurp NGINX_TMPL
+    )
+  );
+
   task_run  %(
     task => 'start nginx',
     plugin => 'service',
-    parameters => %( service => 'nginx', action => 'start' )
+    parameters => %( service => 'nginx', action => 'restart' )
   );
 
 
