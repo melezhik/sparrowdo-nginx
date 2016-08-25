@@ -71,6 +71,15 @@ our sub tasks (%args) {
     parameters => %( service => 'nginx', action => 'restart' )
   );
 
+  task_run  %(
+    task    => 'check nginx process',
+    plugin  => 'proc-validate',
+    parameters => %(
+      pid_file   => ( target_os() eq 'centos6' ) ?? '/var/run/nginx.pid' !! '/run/nginx.pid',
+      footprint => 'nginx.*master'
+    )
+  );
+
 
 }
 
