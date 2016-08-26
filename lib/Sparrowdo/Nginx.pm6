@@ -6,6 +6,7 @@ use Sparrowdo;
 
 constant NGINX_MAIN_TMPL = %?RESOURCES<nginx.conf>.Str;
 constant NGINX_DEFAULT_TMPL = %?RESOURCES<default.conf>.Str;
+constant NGINX_DOC_ROOT = '/usr/share/nginx/html';
 
 our sub tasks (%args) {
 
@@ -50,7 +51,7 @@ our sub tasks (%args) {
     task => "set up nginx default site",
     plugin => "templater",
     parameters => %(
-      variables => %(),
+      variables => %( document_root => %args<document_root> || NGINX_DOC_ROOT ),
       target  => ( target_os() ~~ m/centos/ ) ?? '/etc/nginx/conf.d/default.conf' !! '/etc/nginx/sites-enabled/default',
       mode    => '644',
       source => slurp NGINX_DEFAULT_TMPL
